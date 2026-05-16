@@ -126,7 +126,8 @@ function App() {
         }
       })
 
-      const dataChannel = peerConnection.createDataChannel('oai-events')
+      // HERE
+      const dataChannel = peerConnection.createDataChannel('openai-realtime-events')
       dataChannelRef.current = dataChannel
       dataChannel.addEventListener('message', (message) => {
         try {
