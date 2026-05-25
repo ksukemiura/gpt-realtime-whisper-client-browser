@@ -65,9 +65,9 @@ button:disabled {
   place-items: center;
   border-radius: 50%;
   padding: 0;
-  background: var(--accent);
-  border-color: rgba(255, 255, 255, 0.86);
-  color: #fff;
+  background: var(--text-h);
+  border-color: var(--text-h);
+  color: var(--bg);
   box-shadow:
     0 14px 28px rgba(0, 0, 0, 0.18),
     0 0 0 8px var(--bg);
@@ -138,9 +138,9 @@ button:disabled {
 .partial-lines p::after {
   content: '';
   display: inline-block;
-  width: 0.45em;
+  width: 0;
   height: 1em;
-  margin-left: 0.16em;
+  margin-left: 0.04em;
   border-right: 2px solid currentColor;
   vertical-align: -0.12em;
   animation: caret 900ms steps(2, start) infinite;
