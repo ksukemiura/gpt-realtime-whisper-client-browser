@@ -100,7 +100,26 @@ function App() {
     mediaStreamRef.current?.getTracks().forEach((track) => track.stop())
     mediaStreamRef.current = null
 
-    setPartials({})
+    setPartials((current) => {
+      const pendingTranscripts = Object.entries(current)
+        .map(([id, text]) => ({
+          id,
+          text: text.trim(),
+        }))
+        .filter((line) => line.text)
+
+      if (pendingTranscripts.length > 0) {
+        setTranscripts((existing) => {
+          const existingIds = new Set(existing.map((line) => line.id))
+          return [
+            ...existing,
+            ...pendingTranscripts.filter((line) => !existingIds.has(line.id)),
+          ]
+        })
+      }
+
+      return {}
+    })
     setConnectionState('idle')
   }, [])
 
