@@ -2,7 +2,7 @@
   min-height: 100svh;
   display: grid;
   place-items: center;
-  padding: 32px 32px 140px;
+  padding: 32px;
   box-sizing: border-box;
 }
 
@@ -19,16 +19,15 @@
 }
 
 .control-row {
-  position: fixed;
-  left: 50%;
-  bottom: 32px;
+  position: sticky;
+  bottom: max(24px, env(safe-area-inset-bottom));
   z-index: 10;
-  transform: translateX(-50%);
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
   gap: 12px;
+  min-height: 88px;
+  pointer-events: none;
 }
 
 button {
@@ -57,6 +56,7 @@ button:disabled {
 }
 
 .toggle-action {
+  position: relative;
   width: 72px;
   min-width: 72px;
   height: 72px;
@@ -66,11 +66,26 @@ button:disabled {
   border-radius: 50%;
   padding: 0;
   background: var(--accent);
+  border-color: rgba(255, 255, 255, 0.86);
   color: #fff;
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, 0.18),
+    0 0 0 8px var(--bg);
+  pointer-events: auto;
 }
 
 .toggle-action.is-active {
   background: var(--danger);
+  border-color: var(--danger-strong);
+}
+
+.toggle-action.is-active::before {
+  position: absolute;
+  inset: -10px;
+  border: 2px solid color-mix(in srgb, var(--danger) 48%, transparent);
+  border-radius: inherit;
+  content: '';
+  animation: listening-ring 1400ms ease-out infinite;
 }
 
 .microphone-icon {
@@ -137,16 +152,21 @@ button:disabled {
   }
 }
 
+@keyframes listening-ring {
+  to {
+    opacity: 0;
+    transform: scale(1.16);
+  }
+}
+
 @media (max-width: 640px) {
   .app-shell {
     align-items: stretch;
-    padding: 20px 20px 128px;
+    padding: 20px;
   }
 
   .control-row {
-    bottom: 24px;
-    align-items: center;
-    width: min(260px, calc(100% - 40px));
+    bottom: max(20px, env(safe-area-inset-bottom));
   }
 
   button {

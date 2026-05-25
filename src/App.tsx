@@ -229,6 +229,7 @@ function App() {
             disabled={isBusy}
             type="button"
             onClick={toggleTranscribing}
+            title={isListening ? 'Stop listening' : 'Start listening'}
           >
             <svg className="microphone-icon" viewBox="0 0 24 24">
               <path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v5a3 3 0 0 0 3 3Z" />
