@@ -18,6 +18,10 @@ type TranscriptLine = {
   text: string
 }
 
+type Delay = 'minimal' | 'low' | 'medium' | 'high' | 'xhigh'
+
+const delayOptions: Delay[] = ['minimal', 'low', 'medium', 'high', 'xhigh']
+
 type RealtimeEvent = {
   type?: unknown
   item_id?: unknown
@@ -38,6 +42,7 @@ function App() {
   const [partials, setPartials] = useState<Record<string, string>>({})
   const [errorMessage, setErrorMessage] = useState('')
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'error'>('idle')
+  const [delay, setDelay] = useState<Delay>('medium')
 
   const handleRealtimeEvent = useCallback((event: RealtimeEvent) => {
     if (event.type === 'conversation.item.input_audio_transcription.delta') {
@@ -173,7 +178,10 @@ function App() {
       await peerConnection.setLocalDescription(sdpOffer)
 
       const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
-      const response = await fetch(`${apiBaseUrl}/session`, {
+      const sessionUrl = new URL('/session', apiBaseUrl)
+      sessionUrl.searchParams.set('delay', delay)
+
+      const response = await fetch(sessionUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/sdp',
@@ -196,7 +204,7 @@ function App() {
       setConnectionState('error')
       setErrorMessage(error instanceof Error ? error.message : 'Could not start transcription')
     }
-  }, [handleRealtimeEvent, stopTranscribing])
+  }, [delay, handleRealtimeEvent, stopTranscribing])
 
   const toggleTranscribing = useCallback(() => {
     if (connectionState === 'listening' || connectionState === 'error') {
@@ -270,6 +278,21 @@ function App() {
         {errorMessage && <p className="error-message">{errorMessage}</p>}
 
         <div className="control-row">
+          <label className="delay-control">
+            <span>Delay</span>
+            <select
+              value={delay}
+              disabled={isBusy || isListening}
+              onChange={(event) => setDelay(event.target.value as Delay)}
+            >
+              {delayOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </label>
+
           <button
             className={`toggle-action ${isListening ? 'is-active' : ''}`}
             disabled={isBusy}
