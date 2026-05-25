@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/session': {
-        target: 'http://localhost:3000',
+        target: process.env.API_TARGET,
         changeOrigin: true,
       },
     },
