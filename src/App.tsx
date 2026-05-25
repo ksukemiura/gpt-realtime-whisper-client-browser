@@ -37,6 +37,7 @@ function App() {
   const [transcripts, setTranscripts] = useState<TranscriptLine[]>([])
   const [partials, setPartials] = useState<Record<string, string>>({})
   const [errorMessage, setErrorMessage] = useState('')
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'error'>('idle')
 
   const handleRealtimeEvent = useCallback((event: RealtimeEvent) => {
     if (event.type === 'conversation.item.input_audio_transcription.delta') {
@@ -210,6 +211,25 @@ function App() {
   const isBusy = connectionState === 'connecting' || connectionState === 'stopping'
   const isListening = connectionState === 'listening'
   const partialTexts = Object.values(partials).filter(Boolean)
+  const transcriptText = [
+    ...transcripts.map((line) => line.text),
+    ...partialTexts,
+  ].join('\n')
+  const hasTranscript = transcriptText.trim().length > 0
+
+  const copyTranscript = useCallback(async () => {
+    if (!hasTranscript) {
+      return
+    }
+
+    try {
+      await navigator.clipboard.writeText(transcriptText)
+      setCopyStatus('copied')
+      window.setTimeout(() => setCopyStatus('idle'), 300)
+    } catch {
+      setCopyStatus('error')
+    }
+  }, [hasTranscript, transcriptText])
 
   return (
     <main className="app-shell">
@@ -255,6 +275,19 @@ function App() {
               <path d="M19 11a7 7 0 0 1-14 0" />
               <path d="M12 18v3" />
               <path d="M8 21h8" />
+            </svg>
+          </button>
+
+          <button
+            className={`copy-action ${copyStatus === 'copied' ? 'is-copied' : ''}`}
+            disabled={!hasTranscript}
+            type="button"
+            onClick={copyTranscript}
+            title={hasTranscript ? 'Copy transcript' : 'No transcript to copy'}
+          >
+            <svg className="copy-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="8" y="8" width="10" height="12" rx="2" />
+              <path d="M6 16H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
             </svg>
           </button>
         </div>
