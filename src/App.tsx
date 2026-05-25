@@ -172,7 +172,8 @@ function App() {
       const sdpOffer = await peerConnection.createOffer()
       await peerConnection.setLocalDescription(sdpOffer)
 
-      const response = await fetch('/session', {
+      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
+      const response = await fetch(`${apiBaseUrl}/session`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/sdp',
