@@ -75,7 +75,8 @@ button:disabled {
   pointer-events: auto;
 }
 
-.copy-action {
+.copy-action,
+.clear-action {
   position: relative;
   width: 72px;
   min-width: 72px;
@@ -98,7 +99,8 @@ button:disabled {
   opacity: 0.78;
 }
 
-.copy-icon {
+.copy-icon,
+.clear-icon {
   width: 24px;
   height: 24px;
   fill: none;
